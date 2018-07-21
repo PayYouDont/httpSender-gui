@@ -4,6 +4,7 @@ package com.payudon.listener;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.text.JTextComponent;
 
@@ -39,7 +40,8 @@ public class MyMouseListener implements MouseListener{
 				JTextComponent jc = (JTextComponent)c;
 				String textName = jc.getName();
 				if("pathText".equals(textName)) {
-					new FileDialog();
+					File file = new FileDialog().getSelectFile();
+					jc.setText(file.getAbsolutePath());
 				}
 			}
 		}

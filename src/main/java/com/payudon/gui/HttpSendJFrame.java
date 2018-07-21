@@ -2,6 +2,8 @@ package com.payudon.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
@@ -15,6 +17,7 @@ import javax.swing.border.Border;
 
 import com.payudon.listener.MyFocusListener;
 import com.payudon.listener.MyMouseListener;
+import com.payudon.util.HttpClientUtil;
 
 /** 
 * @ClassName: HttpSendJFrame 
@@ -36,6 +39,7 @@ public class HttpSendJFrame extends JFrame{
 		JTextField urlText = new JTextField("http://localhost:8090/nodeAction/upload");
 		urlText.setBorder(getBorder(getColor(51, 135, 255)));
 		urlText.setBounds(100, 20, 300, 25);
+		urlText.setName("urlText");
 		panel.add(urlText);
 		
 		JLabel pathLabel = new JLabel("资源路径:");
@@ -55,13 +59,44 @@ public class HttpSendJFrame extends JFrame{
 		JTextArea resultArea = new JTextArea();
 		resultArea.setBounds(100, 80, 300, 150);
 		resultArea.setBorder(getBorder(Color.gray));
+		resultArea.setName("resultArea");
 		panel.add(resultArea);
 		
 		JButton sendButton = new JButton("send");
 		sendButton.setBounds(420, 20, 80, 25);
+		sendButton.setFocusable(false);
 		panel.add(sendButton);
+		sendButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				send(panel);
+			}
+		});
 		addFocusListener(panel);
 		addMouseListener(panel);
+	}
+	
+	public static void send(JPanel panel) {
+		String url = ((JTextField)getCompentByName(panel, "urlText")).getText();
+		String path = ((JTextField)getCompentByName(panel, "pathText")).getText();
+		if(!"".equals(url)&&!"".equals(path)) {
+			try {
+				String result = HttpClientUtil.sendPostTar(url, path,"C:\\Users\\47111\\Desktop");
+				((JTextArea)getCompentByName(panel, "resultArea")).setText(result);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public static Component getCompentByName(JPanel panel,String name) {
+		Component[] components= panel.getComponents();
+		for (int i = 0; i < components.length; i++) {
+			Component c = components[i];
+			if(name.equals(c.getName())) {
+				return c;
+			}
+		}
+		return null;
 	}
 	public static void addFocusListener(JPanel panel){
 		Component[] components= panel.getComponents();
