@@ -23,23 +23,10 @@ import com.payudon.listener.MyMouseListener;
 * @date 2018年7月20日 下午2:54:06 
 *  
 */
+@org.springframework.stereotype.Component
 public class HttpSendJFrame extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
-	
-	public HttpSendJFrame() {
-		JFrame frame = new JFrame("PostSender");
-		frame.setSize(570, 300);
-		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//创建面板，这个类似于 HTML 的 div 标签
-		JPanel div = new JPanel();
-		setJPanel(div);
-		// 设置界面可见
-		frame.add(div);frame.setVisible(true);
-		// Frame在窗体居中
-		frame.setLocationRelativeTo(null); 
-	}
 	public static void setJPanel(JPanel panel) {
 		panel.setLayout(null);
 		JLabel urlLabel = new JLabel("请求路径:");
@@ -100,9 +87,6 @@ public class HttpSendJFrame extends JFrame{
 		Color color = new Color(r, g, b);
 		return color;
 	}
-	public static void start() {
-		new HttpSendJFrame();
-	}
 	
 	public static void changeColor(MouseEvent e,JTextField urlText) {
 		int index = e.getButton();
@@ -110,7 +94,19 @@ public class HttpSendJFrame extends JFrame{
 			urlText.setBorder(getBorder(getColor(51, 135, 255)));
 		}
 	}
-	public static void main(String[] args) {
-		HttpSendJFrame.start();
+	public void start() {
+		JFrame frame = new JFrame("PostSender");
+		frame.setSize(570, 300);
+		//关闭窗体后终止程序
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.dispose();
+		//创建面板，这个类似于 HTML 的 div 标签
+		JPanel div = new JPanel();
+		setJPanel(div);
+		// 设置界面可见
+		frame.add(div);
+		frame.setVisible(true);
+		// Frame在窗体居中
+		frame.setLocationRelativeTo(null); 
 	}
 }
