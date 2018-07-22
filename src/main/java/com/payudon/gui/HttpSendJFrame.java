@@ -81,7 +81,7 @@ public class HttpSendJFrame extends JFrame{
 		String path = ((JTextField)getCompentByName(panel, "pathText")).getText();
 		if(!"".equals(url)&&!"".equals(path)) {
 			try {
-				String result = HttpClientUtil.sendPostTar(url, path,"C:\\Users\\47111\\Desktop");
+				String result = HttpClientUtil.sendPostFile(url, path);
 				((JTextArea)getCompentByName(panel, "resultArea")).setText(result);
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -172,8 +172,7 @@ public class HttpClientUtil {
 		}
 		path += File.separatorChar + tar.getName();
 		String result = postUpload(url, tar);
-		File file = new File(path);
 		FileUtil.writeString(result, path);
-		return file.getAbsolutePath();
+		return result;
 	}
 }
