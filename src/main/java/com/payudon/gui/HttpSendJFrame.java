@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +31,7 @@ import com.payudon.util.HttpClientUtil;
 public class HttpSendJFrame extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
+	
 	public static void setJPanel(JPanel panel) {
 		panel.setLayout(null);
 		JLabel urlLabel = new JLabel("请求路径:");
@@ -72,6 +74,21 @@ public class HttpSendJFrame extends JFrame{
 				send(panel);
 			}
 		});
+		
+		JLabel checkLabe = new JLabel("心跳监听");
+		checkLabe.setBounds(420, 50, 60, 25);
+		panel.add(checkLabe);
+		JCheckBox checkbox = new JCheckBox();
+		checkbox.setBounds(480, 50, 25, 25);
+		checkbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(checkbox.isSelected()) {
+					System.out.println(e);
+				}
+			}
+		});
+		panel.add(checkbox);
 		addFocusListener(panel);
 		addMouseListener(panel);
 	}
@@ -133,8 +150,9 @@ public class HttpSendJFrame extends JFrame{
 		JFrame frame = new JFrame("PostSender");
 		frame.setSize(570, 300);
 		//关闭窗体后终止程序
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//frame.dispose();
+		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.dispose();
+		frame.setSize(570, 300);
 		//创建面板，这个类似于 HTML 的 div 标签
 		JPanel div = new JPanel();
 		setJPanel(div);

@@ -41,7 +41,9 @@ public class MyMouseListener implements MouseListener{
 				String textName = jc.getName();
 				if("pathText".equals(textName)) {
 					File file = new FileDialog().getSelectFile();
-					jc.setText(file.getAbsolutePath());
+					if(file!=null) {
+						jc.setText(file.getAbsolutePath());
+					}
 				}
 			}
 		}
