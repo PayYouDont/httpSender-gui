@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -74,21 +73,6 @@ public class HttpSendJFrame extends JFrame{
 				send(panel);
 			}
 		});
-		
-		JLabel checkLabe = new JLabel("心跳监听");
-		checkLabe.setBounds(420, 50, 60, 25);
-		panel.add(checkLabe);
-		JCheckBox checkbox = new JCheckBox();
-		checkbox.setBounds(480, 50, 25, 25);
-		checkbox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(checkbox.isSelected()) {
-					System.out.println(e);
-				}
-			}
-		});
-		panel.add(checkbox);
 		addFocusListener(panel);
 		addMouseListener(panel);
 	}
