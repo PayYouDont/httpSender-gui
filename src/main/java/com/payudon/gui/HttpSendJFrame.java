@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -38,7 +39,7 @@ public class HttpSendJFrame extends JFrame{
 		panel.add(urlLabel);
 		//路径输入框
 		JTextField urlText = new JTextField("http://localhost:8090/nodeAction/upload");
-		urlText.setBorder(getBorder(getColor(51, 135, 255)));
+		urlText.setBorder(getBorder(new Color(51, 135, 255)));
 		urlText.setBounds(100, 20, 300, 25);
 		urlText.setName("urlText");
 		panel.add(urlText);
@@ -58,10 +59,13 @@ public class HttpSendJFrame extends JFrame{
 		panel.add(resultLabel);
 		//返回结果框
 		JTextArea resultArea = new JTextArea();
-		resultArea.setBounds(100, 80, 300, 150);
-		resultArea.setBorder(getBorder(Color.gray));
+		resultArea.setBorder(getBorder(new Color(0F, 0F, 0F, 0F)));
 		resultArea.setName("resultArea");
-		panel.add(resultArea);
+		resultArea.setLineWrap(true);
+		JScrollPane scrollPane = new JScrollPane(resultArea);
+		scrollPane.setBounds(100, 80, 300, 150);
+		scrollPane.setBorder(getBorder(Color.gray));
+		panel.add(scrollPane);
 		
 		JButton sendButton = new JButton("send");
 		sendButton.setBounds(420, 20, 80, 25);
@@ -93,6 +97,10 @@ public class HttpSendJFrame extends JFrame{
 		Component[] components= panel.getComponents();
 		for (int i = 0; i < components.length; i++) {
 			Component c = components[i];
+			if(c instanceof JScrollPane) {
+				JScrollPane pane = (JScrollPane)c;
+				c = pane.getViewport().getView();
+			}
 			if(name.equals(c.getName())) {
 				return c;
 			}
@@ -101,10 +109,14 @@ public class HttpSendJFrame extends JFrame{
 	}
 	public static void addFocusListener(JPanel panel){
 		Component[] components= panel.getComponents();
-		MyFocusListener fl = new MyFocusListener();
+		MyFocusListener focusListerner = new MyFocusListener();
 		for (int i = 0; i < components.length; i++) {
 			Component c = components[i];
-			c.addFocusListener(fl);
+			if(c instanceof JScrollPane) {
+				JScrollPane pane = (JScrollPane)c;
+				c = pane.getViewport().getView();
+			}
+			c.addFocusListener(focusListerner);
 		}
 	}
 	public static void addMouseListener(JPanel panel){
@@ -112,6 +124,10 @@ public class HttpSendJFrame extends JFrame{
 		MyMouseListener fl = new MyMouseListener();
 		for (int i = 0; i < components.length; i++) {
 			Component c = components[i];
+			if(c instanceof JScrollPane) {
+				JScrollPane pane = (JScrollPane)c;
+				c = pane.getViewport().getView();
+			}
 			c.addMouseListener(fl);
 		}
 	}
@@ -119,23 +135,19 @@ public class HttpSendJFrame extends JFrame{
 		Border border = BorderFactory.createLineBorder(color);
 		return border;
 	}
-	public static Color getColor(int r,int g,int b) {
-		Color color = new Color(r, g, b);
-		return color;
-	}
 	
 	public static void changeColor(MouseEvent e,JTextField urlText) {
 		int index = e.getButton();
 		if(index==MouseEvent.BUTTON1) {//鼠标左键按下
-			urlText.setBorder(getBorder(getColor(51, 135, 255)));
+			urlText.setBorder(getBorder(new Color(51, 135, 255)));
 		}
 	}
 	public void start() {
 		JFrame frame = new JFrame("PostSender");
 		frame.setSize(570, 300);
 		//关闭窗体后终止程序
-		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.dispose();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.dispose();
 		frame.setSize(570, 300);
 		//创建面板，这个类似于 HTML 的 div 标签
 		JPanel div = new JPanel();

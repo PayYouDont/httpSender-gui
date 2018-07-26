@@ -30,7 +30,7 @@ public class FileDialog extends JDialog{
 	private File selectFile;
 	static {
 		try {
-			//设置选择文件窗口为windows风格界面
+			//设置选择文件窗口为当前系统风格界面
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			e.printStackTrace();

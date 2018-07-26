@@ -5,7 +5,8 @@ import java.awt.Component;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.text.JTextComponent;
+import javax.swing.JComponent;
+import javax.swing.JTextArea;
 
 import com.payudon.gui.HttpSendJFrame;
 
@@ -30,8 +31,11 @@ public class MyFocusListener implements FocusListener{
 	@Override
 	public void focusGained(FocusEvent e) {
 		Component c = e.getComponent();
-		if(c instanceof JTextComponent) {
-			((JTextComponent)c).setBorder(HttpSendJFrame.getBorder(HttpSendJFrame.getColor(51, 135, 255)));
+		if(c instanceof JComponent) {
+			if(c instanceof JTextArea) {
+				c = c.getParent().getParent();
+			}
+			((JComponent)c).setBorder(HttpSendJFrame.getBorder(new Color(51, 135, 255)));
 		}
 	}
 
@@ -47,8 +51,11 @@ public class MyFocusListener implements FocusListener{
 	@Override
 	public void focusLost(FocusEvent e) {
 		Component c = e.getComponent();
-		if(c instanceof JTextComponent) {
-			((JTextComponent)c).setBorder(HttpSendJFrame.getBorder(Color.gray));
+		if(c instanceof JComponent) {
+			if(c instanceof JTextArea) {
+				c = c.getParent().getParent();
+			}
+			((JComponent)c).setBorder(HttpSendJFrame.getBorder(Color.gray));
 		}
 	}
 	
