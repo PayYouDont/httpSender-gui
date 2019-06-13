@@ -1,13 +1,13 @@
 package com.payudon.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -54,12 +54,17 @@ public class HttpClientUtil {
 	        httpPost.setEntity(reqEntity); 
 	        response = httpClient.execute(httpPost); 
 	        HttpEntity resEntity = response.getEntity();
-	        if (resEntity != null) { 
-	        	result = EntityUtils.toString(response.getEntity(), "utf-8");
-	        }
-	        EntityUtils.consume(resEntity); 
-	        response.close(); 
-	        httpClient.close();
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+	        	InputStream in = resEntity.getContent();
+                String filename = getFileName(response);
+                if(filename!=null){
+                    String outPath = FileUtil.copyFile(in, "D:\\tar\\test\\get", filename);
+                    result = "返回文件获取完毕,文件路径："+outPath;
+                }
+	        }else{
+                result = EntityUtils.toString(response.getEntity(), "utf-8");
+            }
+	        EntityUtils.consume(resEntity);
 	        return result;
 		}catch(Exception e) {
 			 try {
@@ -75,7 +80,27 @@ public class HttpClientUtil {
 			return e.getMessage();
 		}
 	}
-	/**
+    private static String getFileName(HttpResponse response) {
+        Header contentHeader = response.getFirstHeader("Content-Disposition");
+        String filename = null;
+        if (contentHeader != null) {
+            HeaderElement[] values = contentHeader.getElements();
+            if (values.length == 1) {
+                NameValuePair param = values[0].getParameterByName("filename");
+                if (param != null) {
+                    try {
+                        // 此处根据具体编码来设置
+                        filename = new String(param.getValue().getBytes("ISO-8859-1"), "GBK");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return filename;
+    }
+
+    /**
 	 *post请求传输json数据
 	 * @Title: sendPostDataByJson 
 	 * @Description: TODO(这里用一句话描述这个方法的作用) 
@@ -90,7 +115,7 @@ public class HttpClientUtil {
 	 * @author peiyongdong
 	 * @date 2018年6月7日 下午4:10:14
 	 */
-	public static String sendPostDataByJson(String url, String json, String encoding) throws Exception {
+	public static String sendPostDataByJson(String url, String json) throws Exception {
 		if(url.indexOf("http:")==-1) {
 			url = "http://"+url;
 		}
@@ -98,11 +123,10 @@ public class HttpClientUtil {
 
         // 创建httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
-
         // 创建post方式请求对象
         HttpPost httpPost = new HttpPost(url);
         //设置超时
-        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(2000).setConnectTimeout(10000).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(20000).setConnectTimeout(100000).build();
         httpPost.setConfig(requestConfig);
         // 设置参数到请求对象中
         StringEntity stringEntity = new StringEntity(json, ContentType.APPLICATION_JSON);
@@ -143,8 +167,6 @@ public class HttpClientUtil {
 		}
         // 创建httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
-
-       
         List<NameValuePair> list = new ArrayList<NameValuePair>();
         list.add(new BasicNameValuePair("param1", param));
         @SuppressWarnings("deprecation")
@@ -175,4 +197,48 @@ public class HttpClientUtil {
 		FileUtil.writeString(result, path);
 		return result;
 	}
+	public static String post(String url,String param) throws Exception{
+        PrintWriter out = null;
+        BufferedReader in = null;
+        String result = "";
+	    try{
+            URLConnection connection = new URL(url).openConnection ();
+            // 设置通用的请求属性
+            connection.setRequestProperty ("accept","*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            // 发送POST请求必须设置如下两行
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 获取URLConnection对象对应的输出流
+            out = new PrintWriter(connection.getOutputStream());
+            // 发送请求参数
+            out.print(param);
+            // flush输出流的缓冲
+            out.flush();
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        }catch (Exception e){
+           throw e;
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        return result;
+    }
 }

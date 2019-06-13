@@ -39,6 +39,14 @@ public class FileUtil {
 		}
 		return null;
 	}
+    public static byte[] readFile(File file) throws IOException {
+        FileInputStream input = new FileInputStream(file);
+        byte[] inData = new byte[(int) file.length()];
+        while (input.read(inData) != -1) {
+        }
+        input.close();
+        return inData;
+    }
 	public static String copyFile(InputStream in,String outPaht,String fileName) {
 		File file = new File(outPaht);
 		if(!file.exists()) {
@@ -64,30 +72,34 @@ public class FileUtil {
 		}
 	}
 	public static void wirteFile(InputStream in,OutputStream out) {
-		byte[] b = new byte[1024];
-        int len = 0;
-        try {
-        	 while((len=in.read(b))!=-1) {
-             	out.write(b, 0, len);
-             }
-        	 out.flush();
-        }catch(IOException e) {
-        	logger.error("复制文件出错："+e);
-        }finally {
-            try {
-            	if(out!=null) {
-    				out.close();
-            	}
-            	if(in!=null) {
-    	            in.close();
-            	}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-        }
-       
+        wirteFile (in,out,true);
 	}
-	
+    public static void wirteFile(InputStream in, OutputStream out, boolean isClosed) {
+        byte[] b = new byte[1024];
+        int len;
+        try {
+            while ((len = in.read(b)) != -1) {
+                out.write(b, 0, len);
+            }
+            out.flush();
+        } catch (IOException e) {
+            logger.error("复制文件出错：" + e);
+        } finally {
+            if (isClosed) {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+
+    }
 	public static boolean deleteFile(File file) {
 		if (file.exists() && file.isFile()) {
 			if(file.delete()) {
